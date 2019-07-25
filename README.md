@@ -1,4 +1,5 @@
 # Namespace the 0.19 List.Extra as an 0.18 compatible Compat.List.Extra
+* There is enough delta between 0.19 <-> 0.18 to warrant this.
 
 # Convenience functions for working with List
 
