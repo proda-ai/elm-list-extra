@@ -1,4 +1,3 @@
-
 module List.Extra exposing
     ( last, init, getAt, uncons, unconsLast, maximumBy, maximumWith, minimumBy, minimumWith, andMap, andThen, reverseMap, takeWhile, dropWhile, unique, uniqueBy, allDifferent, allDifferentBy, setIf, setAt, remove, updateIf, updateAt, updateIfIndex, removeAt, removeIfIndex, filterNot, swapAt, stableSortWith
     , intercalate, transpose, subsequences, permutations, interweave, cartesianProduct, uniquePairs
@@ -11,7 +10,6 @@ module List.Extra exposing
     , lift2, lift3, lift4
     , groupsOf, groupsOfWithStep, groupsOfVarying, greedyGroupsOf, greedyGroupsOfWithStep
     )
-    
 
 {-| Convenience functions for working with List
 
@@ -204,7 +202,7 @@ cycle len list =
     else if cycleLength < len then
         List.reverse
             (reverseAppend
-                (List.take (remainderBy cycleLength len) list)
+                (List.take (len % cycleLength) list)
                 (cycleHelp [] (len // cycleLength) list)
             )
 
@@ -289,12 +287,12 @@ maximumBy f ls =
 
 {-| Find the first maximum element in a list using a comparison function
 
-    maximumWith compare [] 
+    maximumWith compare []
     --> Nothing
-    
-    maximumWith 
-      (\x y -> compare x.val y.val) 
-      [{id=1, val=1}, {id=2, val=2}, {id=3,val=2}] 
+
+    maximumWith
+      (\x y -> compare x.val y.val)
+      [{id=1, val=1}, {id=2, val=2}, {id=3,val=2}]
     --> Just { id = 2, val = 2 }
 
 -}
@@ -341,11 +339,11 @@ minimumBy f ls =
 
 {-| Find the first minimum element in a list using a comparison function
 
-    minimumWith compare [] 
+    minimumWith compare []
     --> Nothing
-    minimumWith 
-      (\x y -> compare x.val y.val) 
-      [{id=1, val=2}, {id=2, val=1}, {id=3,val=1}] 
+    minimumWith
+      (\x y -> compare x.val y.val)
+      [{id=1, val=2}, {id=2, val=1}, {id=3,val=1}]
     --> Just { id = 2, val = 1 }
 
 -}
@@ -1736,7 +1734,7 @@ isPermutationOf permut xs =
 -}
 zip : List a -> List b -> List ( a, b )
 zip =
-    map2 Tuple.pair
+    map2 (,)
 
 
 {-| Take three lists and returns a list of triples
@@ -1912,15 +1910,17 @@ greedyGroupsOfWithStep size step xs =
     else
         []
 
+
 {-| Group equal elements together. This is different from `group` as each sublist
-will contain *all* equal elements of the original list. Elements will be grouped
+will contain _all_ equal elements of the original list. Elements will be grouped
 in the same order as they appear in the original list. The same applies to elements
 within each group.
 
-    gatherEquals [1,2,1,3,2] 
+    gatherEquals [1,2,1,3,2]
     --> [(1,[1]),(2,[2]),(3,[])]
+
 -}
-gatherEquals : List a -> List (a, List a)
+gatherEquals : List a -> List ( a, List a )
 gatherEquals list =
     gatherWith (==) list
 
@@ -1930,25 +1930,27 @@ and then the equality check is performed against the results of that function ev
 Elements will be grouped in the same order as they appear in the original list. The
 same applies to elements within each group.
 
-    gatherEqualsBy .age [{age=25},{age=23},{age=25}] 
+    gatherEqualsBy .age [{age=25},{age=23},{age=25}]
     --> [({age=25},[{age=25}]),({age=23},[])]
+
 -}
-gatherEqualsBy : (a -> b) -> List a -> List (a, List a)
+gatherEqualsBy : (a -> b) -> List a -> List ( a, List a )
 gatherEqualsBy extract list =
-    gatherWith (\a b -> (extract a) == (extract b)) list
+    gatherWith (\a b -> extract a == extract b) list
 
 
 {-| Group equal elements together using a custom equality function. Elements will be
 grouped in the same order as they appear in the original list. The same applies to
 elements within each group.
 
-    gatherWith (==) [1,2,1,3,2] 
+    gatherWith (==) [1,2,1,3,2]
     --> [(1,[1]),(2,[2]),(3,[])]
+
 -}
-gatherWith : (a -> a -> Bool) -> List a -> List (a, List a)
+gatherWith : (a -> a -> Bool) -> List a -> List ( a, List a )
 gatherWith testFn list =
     let
-        helper : List a -> List (a,List a) -> List (a, List a)
+        helper : List a -> List ( a, List a ) -> List ( a, List a )
         helper scattered gathered =
             case scattered of
                 [] ->
@@ -1959,6 +1961,6 @@ gatherWith testFn list =
                         ( gathering, remaining ) =
                             List.partition (testFn toGather) population
                     in
-                    helper remaining <| (toGather, gathering) :: gathered
+                    helper remaining <| ( toGather, gathering ) :: gathered
     in
     helper list []
