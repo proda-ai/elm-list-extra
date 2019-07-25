@@ -1,3 +1,5 @@
+# Namespace the 0.19 List.Extra as an 0.18 compatible Compat.List.Extra
+
 # Convenience functions for working with List
 
 [![Build Status](https://travis-ci.org/elm-community/list-extra.svg?branch=master)](https://travis-ci.org/elm-community/list-extra)
